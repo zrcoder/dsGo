@@ -1,17 +1,17 @@
 package bitset
 
 import (
-	"testing"
 	"sync"
+	"testing"
 )
 
 func Test(t *testing.T) {
 	const total = 2019
 	bs := NewWithSize(total)
-	for i := uint(0); i < total; i += 2 {
+	for i := 0; i < total; i += 2 {
 		bs.Set(i)
 	}
-	for i := uint(0); i < total; i++ {
+	for i := 0; i < total; i++ {
 		seted := bs.Get(i)
 		switch {
 		case i%2 == 0 && !seted:
@@ -27,11 +27,10 @@ func Test(t *testing.T) {
 }
 
 func Benchmark(b *testing.B) {
-	total := uint(b.N)
-	bs := NewWithSize(uint(total))
+	bs := NewWithSize(b.N)
 	wg := sync.WaitGroup{}
 	wg.Add(b.N)
-	for i := uint(0); i < total; i ++ {
+	for i := 0; i < b.N; i++ {
 		go bs.Set(i)
 		go bs.Get(i)
 		wg.Done()

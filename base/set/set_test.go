@@ -1,12 +1,13 @@
 package set
- 
+
 import "testing"
- 
+
 func Test(t *testing.T) {
 	set := New()
 	for i := 0; i < 10; i++ {
 		set.Add(i)
 	}
+	t.Log(set.AllItems())
 	if set.Size() != 10 {
 		t.Error("something wrong with func Size()")
 	}
@@ -28,7 +29,7 @@ func Test(t *testing.T) {
 		t.Error("len(set.AllItems()) != set.Size()")
 	}
 }
- 
+
 func Benchmark(b *testing.B) {
 	set := NewWithCapacity(b.N)
 	for i := 0; i < b.N; i++ {
@@ -38,4 +39,3 @@ func Benchmark(b *testing.B) {
 		set.Delete(i)
 	}
 }
- 

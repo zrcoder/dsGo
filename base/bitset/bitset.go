@@ -14,37 +14,37 @@ package bitset
 type BitSet []byte
 
 const (
-	byteLen     uint = 8
-	defaultSize uint = 1024
+	byteLen     = 8
+	defaultSize = 1024
 )
 
 func New() BitSet {
 	return NewWithSize(defaultSize)
 }
 
-func NewWithSize(size uint) BitSet {
+func NewWithSize(size int) BitSet {
 	realSize := 1 + (size-1)/byteLen
 	return make([]byte, realSize)
 }
 
 // Set true at the index
-func (bs BitSet) Set(index uint) {
+func (bs BitSet) Set(index int) {
 	i, mask := bs.caculateInnerIndexAndMask(index)
 	bs[i] |= mask
 }
 
 // Set false at the index
-func (bs BitSet) Unset(index uint) {
+func (bs BitSet) Unset(index int) {
 	i, mask := bs.caculateInnerIndexAndMask(index)
 	bs[i] &= ^mask
 }
 
 // Returns the bool value at the index
-func (bs BitSet) Get(index uint) bool {
+func (bs BitSet) Get(index int) bool {
 	i, mask := bs.caculateInnerIndexAndMask(index)
 	return bs[i]&mask != 0
 }
 
-func (bs BitSet) caculateInnerIndexAndMask(index uint) (uint, byte) {
+func (bs BitSet) caculateInnerIndexAndMask(index int) (int, byte) {
 	return index / byteLen, 1 << uint(index%byteLen)
 }

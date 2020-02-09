@@ -21,30 +21,31 @@ type BitSet struct {
 	lock  sync.RWMutex
 	inner base.BitSet
 }
+
 func New() *BitSet {
-	return &BitSet{inner:base.New()}
+	return &BitSet{inner: base.New()}
 }
 
-func NewWithSize(size uint) *BitSet {
-	return &BitSet{inner:base.NewWithSize(size)}
+func NewWithSize(size int) *BitSet {
+	return &BitSet{inner: base.NewWithSize(size)}
 }
 
 // Set true at the index
-func (bs *BitSet) Set(index uint) {
+func (bs *BitSet) Set(index int) {
 	bs.lock.Lock()
 	bs.inner.Set(index)
 	bs.lock.Unlock()
 }
 
 // Set false at the index
-func (bs *BitSet) Unset(index uint) {
+func (bs *BitSet) Unset(index int) {
 	bs.lock.Lock()
 	bs.inner.Unset(index)
 	bs.lock.Unlock()
 }
 
 // Returns the bool value at the index
-func (bs *BitSet) Get(index uint) bool {
+func (bs *BitSet) Get(index int) bool {
 	bs.lock.RLock()
 	r := bs.inner.Get(index)
 	bs.lock.RUnlock()
