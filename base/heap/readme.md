@@ -79,20 +79,27 @@ type Heap interface {
 
 现在使用起来就是这样:
 ```go
+import (
+	"fmt"
+	"github.com/zrcoder/dsGo/base/heap"
+)
+func main()  {
 	nums := []int{2, 9, 10, 7, 4, 3}
 	minHeap := heap.NewWithCap(len(nums))
 	minHeap.InitWithCmp(func(i, j int) bool {
 		return minHeap.Get(i).(int) < minHeap.Get(j).(int)
 	})
-	for _, v := range nums {
-		minHeap.Push(v)
-	}
-	maxHeap := heap.NewWithSlice(nums)
+	maxHeap := heap.NewWithSlice(nil)
 	maxHeap.InitWithCmp(func(i, j int) bool {
 		return maxHeap.Get(i).(int) > maxHeap.Get(j).(int)
 	})
+	for _, v := range nums {
+		minHeap.Push(v)
+		maxHeap.Push(v)
+	}
 	fmt.Println(minHeap.Pop())
 	fmt.Println(maxHeap.Peek())
+}
 ```
 先忽略NewWithCap 和 NewWithSlice， 可以看到，使用者唯一需要确定的就是比较逻辑，即完成 InitWithCmp 方法就创建好了堆实例
 
