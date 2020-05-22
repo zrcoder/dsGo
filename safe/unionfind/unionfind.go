@@ -2,6 +2,7 @@ package unionfind
 
 import (
 	base "github.com/zrcoder/dsGo/base/unionfind"
+	"github.com/zrcoder/leetcodeGo/util/sort"
 	"sync"
 )
 
@@ -25,4 +26,5 @@ func (uf *UnionFind) Join(x, y int) {
 	uf.lock.Lock()
 	uf.inner.Join(x, y)
 	uf.lock.Unlock()
+	sort.Search()
 }

@@ -27,7 +27,7 @@ func Example_1() {
 	// 1
 }
 func Example() {
-	minHeap, maxHeap := NewWithSlice(nil), NewWithSlice(nil)
+	minHeap, maxHeap := NewWithCap(101), NewWithCap(101)
 	minHeap.InitWithCmp(func(i, j int) bool {
 		return minHeap.Get(i).(int) < minHeap.Get(j).(int)
 	})

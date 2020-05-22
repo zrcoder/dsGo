@@ -1,19 +1,15 @@
 package heap
 
-import "container/heap"
+import (
+	"container/heap"
+)
 
-type Cmp func(i, j int) bool
-type Any interface{}
+func New() Heap {
+	return NewWithCap(0)
+}
 
-type Heap interface {
-	InitWithCmp(cmp Cmp)
-	Get(i int) Any
-	Len() int
-	Peek() Any
-	Push(x Any)
-	Pop() Any
-	Fix(i int)
-	Remove(i int) Any
+func NewWithCap(cap int) Heap {
+	return &heapImp{inner: &helper{slice: make([]Any, 0, cap)}}
 }
 
 func NewWithSlice(slice []Any) Heap {
