@@ -34,7 +34,7 @@ union find
 ```
 [heap](base/heap)
 ```text
-heap with Api easy to use, differant from container/heap in standard lib
+a heap with APIs easy to use, different from container/heap in standard lib
 ```
 ### data structures in standard library
 sync.Map
