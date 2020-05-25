@@ -8,14 +8,14 @@ type Item struct {
 }
 
 func Example_priorityQueue() {
-	items := map[string]int{
-		"banana": 3, "apple": 2, "pear": 4,
-	}
-
 	pq := NewWithCap(4)
 	pq.InitWithCmp(func(i, j int) bool {
 		return pq.Get(i).(*Item).Priority > pq.Get(j).(*Item).Priority
 	})
+
+	items := map[string]int{
+		"banana": 3, "apple": 2, "pear": 4,
+	}
 	for name, priority := range items {
 		pq.Push(&Item{
 			Name:     name,
@@ -27,6 +27,7 @@ func Example_priorityQueue() {
 		Priority: 1,
 	}
 	pq.Push(item)
+
 	item.Priority = 5
 	pq.Fix(pq.IndexOf(item))
 
