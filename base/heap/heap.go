@@ -1,21 +1,21 @@
 package heap
 
 type Cmp func(i, j int) bool
-type Any interface{}
+type Value interface{}
 
 type Heap interface {
 	InitWithCmp(cmp Cmp)
-	Get(i int) Any
+	Get(i int) Value
 
-	Push(x Any)
-	Pop() Any
-	Peek() Any
+	Push(x Value)
+	Pop() Value
+	Peek() Value
 
 	Len() int
-	IndexOf(x Any) int
+	IndexOf(x Value) int
 	Fix(i int)
-	Remove(i int) Any
-	Update(i int, value Any)
+	Remove(i int) Value
+	Update(i int, value Value)
 }
 
 func New() Heap {
@@ -23,16 +23,16 @@ func New() Heap {
 }
 
 func NewWithCap(cap int) Heap {
-	return &heapImp{slice: make([]Any, 0, cap)}
+	return &heapImp{slice: make([]Value, 0, cap)}
 }
 
-func NewWithSlice(slice []Any) Heap {
+func NewWithSlice(slice []Value) Heap {
 	return &heapImp{slice: slice}
 }
 
 type heapImp struct {
 	cmp   Cmp
-	slice []Any
+	slice []Value
 }
 
 func (h *heapImp) InitWithCmp(cmp Cmp) {
@@ -42,15 +42,15 @@ func (h *heapImp) InitWithCmp(cmp Cmp) {
 		h.down(i, n)
 	}
 }
-func (h *heapImp) Get(i int) Any {
+func (h *heapImp) Get(i int) Value {
 	return h.slice[i]
 }
 
-func (h *heapImp) Push(x Any) {
+func (h *heapImp) Push(x Value) {
 	h.slice = append(h.slice, x)
 	h.up(h.Len() - 1)
 }
-func (h *heapImp) Pop() Any {
+func (h *heapImp) Pop() Value {
 	n := h.Len() - 1
 	h.swap(0, n)
 	h.down(0, n)
@@ -58,14 +58,14 @@ func (h *heapImp) Pop() Any {
 	h.slice = h.slice[:n]
 	return result
 }
-func (h *heapImp) Peek() Any {
+func (h *heapImp) Peek() Value {
 	return h.slice[0]
 }
 
 func (h *heapImp) Len() int {
 	return len(h.slice)
 }
-func (h *heapImp) IndexOf(x Any) int {
+func (h *heapImp) IndexOf(x Value) int {
 	for i, v := range h.slice {
 		if v == x {
 			return i
@@ -78,7 +78,7 @@ func (h *heapImp) Fix(i int) {
 		h.up(i)
 	}
 }
-func (h *heapImp) Remove(i int) Any {
+func (h *heapImp) Remove(i int) Value {
 	n := h.Len() - 1
 	if n != i {
 		h.swap(i, n)
@@ -90,7 +90,7 @@ func (h *heapImp) Remove(i int) Any {
 	h.slice = h.slice[:n]
 	return result
 }
-func (h *heapImp) Update(i int, value Any) {
+func (h *heapImp) Update(i int, value Value) {
 	h.slice[i] = value
 	h.Fix(i)
 }

@@ -5,7 +5,7 @@ import (
 )
 
 func Example_intHeap() {
-	h := NewWithSlice([]Any{2, 1, 5})
+	h := NewWithSlice([]Value{2, 1, 5})
 	h.InitWithCmp(func(i, j int) bool {
 		return h.Get(i).(int) < h.Get(j).(int)
 	})
