@@ -34,7 +34,7 @@ union find
 ```
 [heap](base/heap)
 ```text
-a wrapper of container/heap in standard lib
+heap with Api easy to use, differant from container/heap in standard lib
 ```
 ### data structures in standard library
 sync.Map
