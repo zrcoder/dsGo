@@ -6,12 +6,16 @@ type Any interface{}
 type Heap interface {
 	InitWithCmp(cmp Cmp)
 	Get(i int) Any
-	Len() int
-	Peek() Any
+
 	Push(x Any)
 	Pop() Any
+	Peek() Any
+
+	Len() int
+	IndexOf(x Any) int
 	Fix(i int)
 	Remove(i int) Any
+	Update(i int, value Any)
 }
 
 func New() Heap {
@@ -38,24 +42,14 @@ func (h *heapImp) InitWithCmp(cmp Cmp) {
 		h.down(i, n)
 	}
 }
-
 func (h *heapImp) Get(i int) Any {
 	return h.slice[i]
-}
-
-func (h *heapImp) Len() int {
-	return len(h.slice)
-}
-
-func (h *heapImp) Peek() Any {
-	return h.slice[0]
 }
 
 func (h *heapImp) Push(x Any) {
 	h.slice = append(h.slice, x)
 	h.up(h.Len() - 1)
 }
-
 func (h *heapImp) Pop() Any {
 	n := h.Len() - 1
 	h.swap(0, n)
@@ -64,13 +58,26 @@ func (h *heapImp) Pop() Any {
 	h.slice = h.slice[:n]
 	return result
 }
+func (h *heapImp) Peek() Any {
+	return h.slice[0]
+}
 
+func (h *heapImp) Len() int {
+	return len(h.slice)
+}
+func (h *heapImp) IndexOf(x Any) int {
+	for i, v := range h.slice {
+		if v == x {
+			return i
+		}
+	}
+	return -1
+}
 func (h *heapImp) Fix(i int) {
 	if !h.down(i, h.Len()) {
 		h.up(i)
 	}
 }
-
 func (h *heapImp) Remove(i int) Any {
 	n := h.Len() - 1
 	if n != i {
@@ -82,6 +89,10 @@ func (h *heapImp) Remove(i int) Any {
 	result := h.slice[n]
 	h.slice = h.slice[:n]
 	return result
+}
+func (h *heapImp) Update(i int, value Any) {
+	h.slice[i] = value
+	h.Fix(i)
 }
 
 func (h *heapImp) swap(i, j int) {
