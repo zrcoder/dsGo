@@ -62,7 +62,7 @@ maxHeap.Pop()
 基于上条分析，Push 和 Pop 就可以直接按照堆实例的方法调用，而不用弄成一个包方法
 
 综上，我们需要提供一个这样的 Heap：
-```text
+```go
 type Cmp func(i, j int) bool
 type Any interface{}
 
