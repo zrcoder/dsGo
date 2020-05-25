@@ -52,7 +52,7 @@ maxHeap.Pop()
 综合看，步骤 1 里需要实现 heap.Interface 接口，并且步骤2使用的是heap包的 Push 和 Pop 方法，而不是类型本身的 Push 和 Pop方法
 
 ### 分析修改 Api 设计
-看起来标准库当前设计并不友好，让我尝试修改，让 Api 更易用。
+看起来标准库当前设计并不友好，尝试修改下，让 Api 更易用。
 
 #### 1. 使用者只需关注比较逻辑 
 堆底层是一个切片， heap.Interface 里要求的五个方法 Len、Less、Swap、Push、Pop，有四个无需使用者关注，只有比较逻辑需要使用者确定
