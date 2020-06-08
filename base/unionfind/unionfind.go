@@ -14,21 +14,11 @@ func NewUnionFind(n int) UnionFind {
 	}
 	return unionFind
 }
-
-/* 递归实现find：
 func (uf UnionFind) Find(x int) int {
-	if uf[x] != x {
-		uf[x] = uf.find(uf[x]) // 路径压缩
+	for uf[x] != x {
+		x, uf[x] = uf[x], uf[uf[x]]
 	}
-	return uf[x]
-}
-*/
-func (uf UnionFind) Find(x int) int {
-	for uf[x] != x { // 路径压缩
-		uf[x] = uf[uf[x]]
-		x = uf[x]
-	}
-	return uf[x]
+	return x
 }
 func (uf UnionFind) Join(x, y int) {
 	rootX, rootY := uf.Find(x), uf.Find(y)
