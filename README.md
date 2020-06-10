@@ -26,7 +26,7 @@ A set can store unique values, without any particular order.
 ```
 [bit set](base/bitset)
 ```text
-Bit set is a fixed-size sequence of n bits.
+A bit set is a fixed-size sequence of n bits.
 ```
 [unionfind](base/unionfind)
 ```text
@@ -34,7 +34,7 @@ union find
 ```
 [heap](base/heap)
 ```text
-a heap with APIs easy to use, different from container/heap in standard lib
+A heap with APIs easy to use, different from container/heap in standard lib
 ```
 ### data structures in standard library
 sync.Map
