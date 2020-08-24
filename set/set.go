@@ -11,7 +11,7 @@ func New() Set {
 	return make(map[Any]Empty)
 }
 
-func NewWithCapacity(c int) Set  {
+func NewWithCapacity(c int) Set {
 	return make(map[Any]Empty, c)
 }
 
@@ -37,7 +37,7 @@ func (s Set) AllItems() []Any {
 	i := 0
 	for key := range s {
 		r[i] = key
-		i ++
+		i++
 	}
 	return r
 }

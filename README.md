@@ -1,40 +1,96 @@
 # dsGo
 Data structures impletioned with Go
 ### `base` or `safe`?
-we give 2 versions of each data structrue, thread safe or not safe, api is just the same. for example:
-```
-// a base set
-github.com/zrcoder/dsGo/base/set
+For each data structure, we give a base version, which will not be thread safe.
 
-// a thread safe set
-github.com/zrcoder/dsGo/safe/set
+If you want a safe one, just make a simple wrapper of the base one, for example, let's have a look at the wrapper of set. 
+```
+import (
+	"sync"
+ 
+	ds "github.com/zrcoder/dsGo"
+	base "github.com/zrcoder/dsGo/set"
+)
+ 
+type Set struct {
+	sync.RWMutex
+	inner base.Set
+}
+ 
+func New() *Set {
+	return &Set{inner: base.New()}
+}
+ 
+func NewWithCapacity(c int) *Set {
+	return &Set{inner: base.NewWithCapacity(c)}
+}
+ 
+func (s *Set) Add(item ds.Any) {
+	s.Lock()
+	s.inner.Add(item)
+	s.Unlock()
+}
+ 
+func (s *Set) Delete(item ds.Any) {
+	s.Lock()
+	s.inner.Delete(item)
+	s.Unlock()
+}
+ 
+func (s *Set) Has(item ds.Any) bool {
+	s.RLock()
+	exist := s.inner.Has(item)
+	s.RUnlock()
+	return exist
+}
+ 
+func (s *Set) Size() int {
+	s.RLock()
+	length := s.inner.Size()
+	s.RUnlock()
+	return length
+}
+ 
+func (s *Set) AllItems() []ds.Any {
+	s.RLock()
+	items := s.inner.AllItems()
+	s.RUnlock()
+	return items
+}
+
+func (s *Set) Range(f func(item ds.Any) bool)  {
+	s.Lock()
+	s.inner.Range(f)
+	s.Unlock()
+}
+
 ```
 the base version usually performances better than the safe one <br>
 and the safe version usually used for concurrent scenes
 ### our data structures
-[queue](base/queue)
+[queue](queue/queue.go)
 ```text
 A queue gives you a FIFO or first-in firs-out order.
 ```
-[stack](base/stack)
+[stack](stack/stack.go)
 ```text
 A stack gives you a LIFO or last-in first-out order.
 ```
-[set](base/set)
+[heap](heap/readme.md)
+```text
+A heap with APIs easy to use, different from container/heap in standard lib
+```
+[set](set/set.go)
 ```text
 A set can store unique values, without any particular order.
 ```
-[bit set](base/bitset)
+[bit set](bitset/bitset.go)
 ```text
 A bit set is a fixed-size sequence of n bits.
 ```
-[unionfind](base/unionfind)
+[unionfind](unionfind/unionfind.go)
 ```text
 union find
-```
-[heap](base/heap)
-```text
-A heap with APIs easy to use, different from container/heap in standard lib
 ```
 ### data structures in standard library
 sync.Map

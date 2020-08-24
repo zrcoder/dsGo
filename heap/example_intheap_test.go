@@ -6,8 +6,8 @@ import (
 
 func Example_intHeap() {
 	h := NewWithSlice([]Value{2, 1, 5})
-	h.InitWithCmp(func(i, j int) bool {
-		return h.Get(i).(int) < h.Get(j).(int)
+	h.InitWithCmp(func(a, b Value) bool {
+		return a.(int) < b.(int)
 	})
 	h.Push(3)
 	fmt.Printf("minimum: %d\n", h.Peek())

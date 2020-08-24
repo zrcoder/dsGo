@@ -9,8 +9,8 @@ type Item struct {
 
 func Example_priorityQueue() {
 	pq := NewWithCap(4)
-	pq.InitWithCmp(func(i, j int) bool {
-		return pq.Get(i).(*Item).Priority > pq.Get(j).(*Item).Priority
+	pq.InitWithCmp(func(a, b Value) bool {
+		return a.(*Item).Priority > b.(*Item).Priority
 	})
 
 	items := map[string]int{
@@ -28,8 +28,10 @@ func Example_priorityQueue() {
 	}
 	pq.Push(item)
 
+	// get the origin index before updating
+	index := pq.IndexOf(item)
 	item.Priority = 5
-	pq.Fix(pq.IndexOf(item))
+	pq.Fix(index)
 
 	for pq.Len() > 0 {
 		item := pq.Pop().(*Item)

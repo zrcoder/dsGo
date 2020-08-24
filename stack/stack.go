@@ -5,42 +5,44 @@
 	and Peek at the top element without poping it off.
 */
 package stack
- 
-import (
-	"sync"
-	
-	. "github.com/zrcoder/dsGo"
-	base "github.com/zrcoder/dsGo/base/stack"
-)
+
+import . "github.com/zrcoder/dsGo"
+
+type stackItem struct {
+	item Any
+	next *stackItem
+}
 
 type Stack struct {
-	lock  sync.RWMutex
-	inner *base.Stack
+	peek  *stackItem
+	depth uint64
 }
- 
+
 func New() *Stack {
-	return &Stack{inner: base.New()}
+	return &Stack{}
 }
 
 // Add a new element to the top
 func (s *Stack) Push(item Any) {
-	s.lock.Lock()
-	s.inner.Push(item)
-	s.lock.Unlock()
+	s.peek = &stackItem{item: item, next: s.peek}
+	s.depth++
 }
- 
+
 // Remove the element from the top and returns it
 func (s *Stack) Pop() Any {
-	s.lock.Lock()
-	item := s.inner.Pop()
-	s.lock.Unlock()
+	if s.depth == 0 {
+		return nil
+	}
+	item := s.peek.item
+	s.peek = s.peek.next
+	s.depth--
 	return item
 }
- 
+
 // Returns the element from the top without deletion
 func (s *Stack) Peek() Any {
-	s.lock.RLock()
-	item := s.inner.Peek()
-	s.lock.RUnlock()
-	return item
+	if s.depth == 0 {
+		return nil
+	}
+	return s.peek.item
 }

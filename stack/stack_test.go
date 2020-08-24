@@ -1,7 +1,7 @@
 package stack
- 
+
 import "testing"
- 
+
 func Test(t *testing.T) {
 	stack := New()
 	const total = 10
@@ -15,7 +15,7 @@ func Test(t *testing.T) {
 		}
 	}
 }
- 
+
 func Benchmark(b *testing.B) {
 	stack := New()
 	for i := 0; i < b.N; i++ {

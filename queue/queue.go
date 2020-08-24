@@ -30,7 +30,7 @@ func (q *Queen) Enqueue(item Any) {
 		q.tail.next = newItem
 	}
 	q.tail = newItem
-	q.depth ++
+	q.depth++
 }
 
 // Remove the first item from the queue and returns it
@@ -40,6 +40,6 @@ func (q *Queen) Dequeue() Any {
 	}
 	item := q.head.item
 	q.head = q.head.next
-	q.depth --
+	q.depth--
 	return item
 }
