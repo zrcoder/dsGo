@@ -88,7 +88,7 @@ A set can store unique values, without any particular order.
 ```text
 A bit set is a fixed-size sequence of n bits.
 ```
-[unionfind](unionfind/unionfind.go)
+[unionfind](unionfind/readme.md)
 ```text
 union find
 ```

@@ -1,9 +1,5 @@
 package unionfind
 
-/*
-一个非常有趣的讲解： https://blog.csdn.net/niushuai666/article/details/6662911
-*/
-
 // 用数组实现，也可以定义节点建立森林
 type UnionFind []int
 
