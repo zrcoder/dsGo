@@ -29,12 +29,6 @@ func NewWithSlice(slice []Value) Heap {
 	return &heapImp{slice: slice}
 }
 
-func NewWithElements(elements []Value) Heap {
-	slice := make([]Value, len(elements))
-	_ = copy(slice, elements)
-	return &heapImp{slice: slice}
-}
-
 type heapImp struct {
 	cmp   Cmp
 	slice []Value

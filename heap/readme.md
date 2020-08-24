@@ -63,35 +63,36 @@ maxHeap.Pop()
 
 综上，我们需要提供一个这样的 Heap：
 ```go
-type Cmp func(i, j int) bool
-type Any interface{}
+type Value interface{}
+type Cmp func(a, b Value) bool
 
 type Heap interface {
 	InitWithCmp(cmp Cmp)
-	Get(i int) Any
 
-	Push(x Any)
-	Pop() Any
-	Peek() Any
+	Push(x Value)
+	Pop() Value
+	Peek() Value
+	Len() int
 }
 ```
-注意到有一些上面没有提到的方法，有的是为了方便使用，如 Peek、Len，有的是基于当前设计的实现需要。
+注意到有一些上面没有提到的方法，是为了方便使用，如 Peek、Len。
 
 现在使用起来就是这样:
 ```go
 import (
 	"fmt"
+
 	"github.com/zrcoder/dsGo/base/heap"
 )
 func main()  {
 	nums := []int{2, 9, 10, 7, 4, 3}
 	minHeap := heap.NewWithCap(len(nums))
-	minHeap.InitWithCmp(func(i, j int) bool {
-		return minHeap.Get(i).(int) < minHeap.Get(j).(int)
+	minHeap.InitWithCmp(func(i, j heap.Value) bool {
+		return i.(int) < j.(int)
 	})
 	maxHeap := heap.NewWithSlice(nil)
-	maxHeap.InitWithCmp(func(i, j int) bool {
-		return maxHeap.Get(i).(int) > maxHeap.Get(j).(int)
+	maxHeap.InitWithCmp(func(i, j heap.Value) bool {
+		return i.(int) > j.(int)
 	})
 	for _, v := range nums {
 		minHeap.Push(v)
@@ -112,10 +113,10 @@ func New() Heap {
 }
 
 func NewWithCap(cap int) Heap {
-	return &heapImp{inner: &helper{slice: make([]Any, 0, cap)}}
+	return &heapImp{inner: &helper{slice: make([]Value, 0, cap)}}
 }
 
-func NewWithSlice(slice []Any) Heap {
+func NewWithSlice(slice []Value) Heap {
 	return &heapImp{inner: &helper{slice: slice}}
 }
 
@@ -128,7 +129,7 @@ func (h *heapImp) InitWithCmp(cmp Cmp) {
 	heap.Init(h.inner)
 }
 
-func (h *heapImp) Get(i int) Any {
+func (h *heapImp) Get(i int) Value {
 	return h.inner.slice[i]
 }
 
@@ -136,22 +137,22 @@ func (h *heapImp) Len() int {
 	return h.inner.Len()
 }
 
-func (h *heapImp) Peek() Any {
+func (h *heapImp) Peek() Value {
 	return h.inner.slice[0]
 }
 
-func (h *heapImp) Push(x Any) {
+func (h *heapImp) Push(x Value) {
 	heap.Push(h.inner, x)
 }
 
-func (h *heapImp) Pop() Any {
+func (h *heapImp) Pop() Value {
 	return heap.Pop(h.inner)
 }
 ```
 heapImp的关键属性inner就是包装了标准库
 ```go
 type helper struct {
-	slice []Any
+	slice []Value
 	cmp   Cmp
 }
 
