@@ -1,5 +1,6 @@
 # dsGo
 Data structures impletioned with Go
+
 ### `base` or `safe`?
 For each data structure, we give a base version, which will not be thread safe.
 
@@ -92,6 +93,10 @@ A bit set is a fixed-size sequence of n bits.
 ```text
 union find
 ```
+[ring buffer](ringbuffer/ringbuffer.go)
+```
+Also known as a circular buffer.
+```
 ### data structures in standard library
 sync.Map
 ```
@@ -109,4 +114,5 @@ container/ring.Ring
 ```
 A ring is an element of a circular list, or ring.
 ```
-
+### references
+[swift-algorithm-club in GitHub](https://github.com/raywenderlich/swift-algorithm-club)
