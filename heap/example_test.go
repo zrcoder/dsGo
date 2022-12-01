@@ -2,14 +2,32 @@ package heap
 
 import "fmt"
 
+func Example_intHeap() {
+	h := NewWithCap(4)
+	h.Push(2)
+	h.Push(1)
+	h.Push(5)
+	h.Push(3)
+	fmt.Printf("minimum: %d\n", h.Peek())
+
+	h.Update(h.IndexOf(1), 8)
+	h.Remove(h.IndexOf(3))
+
+	for h.Len() > 0 {
+		fmt.Printf("%d ", h.Pop())
+	}
+	// Output:
+	// minimum: 1
+	// 2 5 8
+}
+
 type Item struct {
 	Name     string
 	Priority int
 }
 
 func Example_priorityQueue() {
-	pq := NewWithCap(4)
-	pq.InitWithCmp(func(a, b Value) bool {
+	pq := New(func(a, b any) bool {
 		return a.(*Item).Priority > b.(*Item).Priority
 	})
 
@@ -28,10 +46,8 @@ func Example_priorityQueue() {
 	}
 	pq.Push(item)
 
-	// get the origin index before updating
-	index := pq.IndexOf(item)
 	item.Priority = 5
-	pq.Fix(index)
+	pq.Fix(pq.IndexOf(item))
 
 	for pq.Len() > 0 {
 		item := pq.Pop().(*Item)

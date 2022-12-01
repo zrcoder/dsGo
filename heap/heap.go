@@ -1,43 +1,87 @@
 package heap
 
-type Value interface{}
-type Cmp func(a, b Value) bool
-
 type Heap interface {
-	InitWithCmp(cmp Cmp)
-
-	Push(x Value)
-	Pop() Value
-	Peek() Value
+	Push(x any)
+	Pop() any
+	Peek() any
 
 	Len() int
-	IndexOf(x Value) int
-	Fix(i int)
-	Remove(i int) Value
-	Update(i int, value Value)
+	IndexOf(x any) int
+	Fix(index int)
+	Remove(index int) any
+	Update(index int, value any)
 }
 
-func New() Heap {
-	return NewWithCap(0)
+type Comparator func(a, b any) bool
+
+const DefaultCapacity = 64
+
+func New(cmp ...Comparator) Heap {
+	return NewWithCap(DefaultCapacity, cmp...)
 }
 
-func NewWithCap(cap int) Heap {
-	return &heapImp{slice: make([]Value, 0, cap)}
+func NewWithCap(cap int, cmp ...Comparator) Heap {
+	return &heapImp{
+		slice: make([]any, 0, cap),
+		cmp:   getComparator(cmp),
+	}
 }
 
-func NewWithSlice(slice []Value) Heap {
-	return &heapImp{slice: slice}
+func NewWithSlice(slice []any, cmp ...Comparator) Heap {
+	res := &heapImp{
+		slice: slice,
+		cmp:   getComparator(cmp),
+	}
+	res.build()
+	return res
+}
+
+func getComparator(cmp []Comparator) Comparator {
+	if len(cmp) == 0 {
+		return func(a, b any) bool {
+			switch av := a.(type) {
+			case int:
+				return av < b.(int)
+			case int8:
+				return av < b.(int8)
+			case int16:
+				return av < b.(int16)
+			case int32:
+				return av < b.(int32)
+			case int64:
+				return av < b.(int64)
+			case uint:
+				return av < b.(uint)
+			case uint8:
+				return av < b.(uint8)
+			case uint16:
+				return av < b.(uint16)
+			case uint32:
+				return av < b.(uint32)
+			case uint64:
+				return av < b.(uint64)
+			case uintptr:
+				return av < b.(uintptr)
+			case float32:
+				return av < b.(float32)
+			case float64:
+				return av < b.(float64)
+			default:
+				panic("you should pass a comprator for the items")
+			}
+		}
+	}
+	return cmp[0]
 }
 
 type heapImp struct {
-	cmp   Cmp
-	slice []Value
+	cmp   Comparator
+	slice []any
 }
 
-// InitWithCmp will build the heap by the given cmp.
+// build will build the heap by the given cmp.
 // The complexity is O(n) where n = h.Len().
-func (h *heapImp) InitWithCmp(cmp Cmp) {
-	h.cmp = cmp
+func (h *heapImp) build() {
 	n := h.Len()
 	for i := n/2 - 1; i >= 0; i-- {
 		h.down(i, n)
@@ -46,7 +90,7 @@ func (h *heapImp) InitWithCmp(cmp Cmp) {
 
 // Push pushes the element x onto the heap.
 // The complexity is O(log n) where n = h.Len().
-func (h *heapImp) Push(x Value) {
+func (h *heapImp) Push(x any) {
 	h.slice = append(h.slice, x)
 	h.up(h.Len() - 1)
 }
@@ -54,7 +98,7 @@ func (h *heapImp) Push(x Value) {
 // Pop removes and returns the peek element from the heap.
 // The complexity is O(log n) where n = h.Len().
 // Pop is equivalent to Remove(h, 0).
-func (h *heapImp) Pop() Value {
+func (h *heapImp) Pop() any {
 	last := h.Len() - 1
 	h.swap(0, last)
 	h.down(0, last)
@@ -65,7 +109,7 @@ func (h *heapImp) Pop() Value {
 
 // Peek returns the peek value of the heap
 // The complexity is O(1)
-func (h *heapImp) Peek() Value {
+func (h *heapImp) Peek() any {
 	return h.slice[0]
 }
 
@@ -78,23 +122,14 @@ func (h *heapImp) Len() int {
 // IndexOf returns the index of x in the inner slice of the heap
 // If x is not in the heap, returns -1
 // The complexity is O(n)
-func (h *heapImp) IndexOf(x Value) int {
-	return h.indexOf(x, 0)
-}
-
-func (h *heapImp) indexOf(x Value, i int) int {
-	if i >= h.Len() || h.cmp(x, h.slice[i]) {
-		return -1
+func (h *heapImp) IndexOf(x any) int {
+	res := -1
+	for i, v := range h.slice {
+		if v == x {
+			return i
+		}
 	}
-	if h.slice[i] == x {
-		return i
-	}
-	// search in left child
-	if r := h.indexOf(x, 2*i+1); r != -1 {
-		return r
-	}
-	// search in right child
-	return h.indexOf(x, 2*i+2)
+	return res
 }
 
 // Fix re-establishes the heap ordering after the element at index i has changed its value.
@@ -109,7 +144,7 @@ func (h *heapImp) Fix(i int) {
 
 // Remove removes and returns the element at index i from the heap.
 // The complexity is O(log n) where n = h.Len().
-func (h *heapImp) Remove(i int) Value {
+func (h *heapImp) Remove(i int) any {
 	n := h.Len() - 1
 	if n != i {
 		h.swap(i, n)
@@ -124,7 +159,7 @@ func (h *heapImp) Remove(i int) Value {
 
 // Update update the value of the element at index i, and then fix the heap
 // The complexity is O(log n) where n = h.Len().
-func (h *heapImp) Update(i int, value Value) {
+func (h *heapImp) Update(i int, value any) {
 	h.slice[i] = value
 	h.Fix(i)
 }
