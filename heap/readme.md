@@ -61,23 +61,7 @@ maxHeap.Pop()
 #### 2. Push 和 Pop 就可以直接按照堆实例的方法调用
 基于上条分析，Push 和 Pop 就可以直接按照堆实例的方法调用，而不用弄成一个包方法
 
-综上，我们需要提供一个这样的 Heap：
-```go
-type Value interface{}
-type Cmp func(a, b Value) bool
-
-type Heap interface {
-	InitWithCmp(cmp Cmp)
-
-	Push(x Value)
-	Pop() Value
-	Peek() Value
-	Len() int
-}
-```
-注意到有一些上面没有提到的方法，是为了方便使用，如 Peek、Len。
-
-现在使用起来就是这样:
+综上，我们需要提供 Heap，使用起来像这样:
 ```go
 import (
 	"fmt"
@@ -86,96 +70,36 @@ import (
 )
 func main()  {
 	nums := []int{2, 9, 10, 7, 4, 3}
-	minHeap := heap.NewWithCap(len(nums))
-	minHeap.InitWithCmp(func(i, j heap.Value) bool {
-		return i.(int) < j.(int)
-	})
-	maxHeap := heap.NewWithSlice(nil)
-	maxHeap.InitWithCmp(func(i, j heap.Value) bool {
-		return i.(int) > j.(int)
-	})
+
+	cmp := func(a, b any) bool {
+		return a.(int) > b.(int)
+	}
+	maxHeap := heap.New(cmp)
 	for _, v := range nums {
 		minHeap.Push(v)
 		maxHeap.Push(v)
 	}
+
+	minHeap := heap.NewWithCap(len(nums)) // use default comparator: a < b
+
 	fmt.Println(minHeap.Pop())
 	fmt.Println(maxHeap.Peek())
 }
 ```
-先忽略NewWithCap 和 NewWithSlice， 可以看到，使用者唯一需要确定的就是比较逻辑，即完成 InitWithCmp 方法就创建好了堆实例
+可以看到，使用者唯一需要确定的就是比较逻辑，创建堆实例时传入比较函数即可。
 
 ### 实现新设计
 有两个实现方法
 #### 1. 包装标准库已有 Api
-```go
-func New() Heap {
-	return NewWithCap(0)
-}
+略
+#### 2. 参考标准库核心方法 up 和 down 从头写
 
-func NewWithCap(cap int) Heap {
-	return &heapImp{inner: &helper{slice: make([]Value, 0, cap)}}
-}
-
-func NewWithSlice(slice []Value) Heap {
-	return &heapImp{inner: &helper{slice: slice}}
-}
-
-type heapImp struct {
-	inner *helper
-}
-
-func (h *heapImp) InitWithCmp(cmp Cmp) {
-	h.inner.cmp = cmp
-	heap.Init(h.inner)
-}
-
-func (h *heapImp) Get(i int) Value {
-	return h.inner.slice[i]
-}
-
-func (h *heapImp) Len() int {
-	return h.inner.Len()
-}
-
-func (h *heapImp) Peek() Value {
-	return h.inner.slice[0]
-}
-
-func (h *heapImp) Push(x Value) {
-	heap.Push(h.inner, x)
-}
-
-func (h *heapImp) Pop() Value {
-	return heap.Pop(h.inner)
-}
-```
-heapImp的关键属性inner就是包装了标准库
-```go
-type helper struct {
-	slice []Value
-	cmp   Cmp
-}
-
-func (h *helper) Len() int           { return len(h.slice) }
-func (h *helper) Less(i, j int) bool { return h.cmp(i, j) }
-func (h *helper) Swap(i, j int)      { h.slice[i], h.slice[j] = h.slice[j], h.slice[i] }
-func (h *helper) Push(x interface{}) {
-	h.slice = append(h.slice, x)
-}
-func (h *helper) Pop() interface{} {
-	n := len(h.slice)
-	x := h.slice[n-1]
-	h.slice = h.slice[:n-1]
-	return x
-}
-```
-#### 2. 参考标准库核心方法 up 和 down ，从头写heapImp
 详见[具体实现](heap.go)
-### 扩展 Api
-Get用来获取指定索引元素，主要用在InitWithCmp方法中；
 
-Update 和 Remove 方法， 可用于更新或移除指定索引处的元素；
+### 扩展
 
-IndexOf 用来获取指定元素在堆中的索引，获取索引后可继续调用Update 或 Remove方法。
+我们还实现了扩展API，Remove 和 Update，Remove 可以删除任意元素（Pop只能删除堆顶元素），Update 可以在某个元素值发改变后调整堆。
 
-详见 [intHeap使用示例](example_intheap_test.go)  和  [优先队列使用示例](example_pq_test.go)
+我们借助哈希表 idx 维护了每个元素在堆里的索引，知道索引后可以调用 up 和 down 方法在对数级复杂度内完成操作。
+
+> 同时考虑了相同元素多次入堆的情况，用了哈希表 cnt 维护了每个元素的个数，data 数组中仅维护去重后的元素。
