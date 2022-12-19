@@ -5,7 +5,7 @@ import (
 )
 
 func Example_ints() {
-	h := NewWithCap[int](4)
+	h := NewWithCap[int](4, func(a, b any) bool { return a.(int) < b.(int) })
 	h.Push(2)
 	h.Push(1)
 	h.Push(5)
@@ -65,7 +65,7 @@ func Example_custom() {
 
 func Example_build() {
 	nums := []int{6, 8, 5, 9, 3}
-	h := Build(nums)
+	h := Build(nums, func(a, b any) bool { return a.(int) < b.(int) })
 	h.Push(1)
 	h.Remove(3)
 	h.Remove(100)

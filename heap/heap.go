@@ -12,67 +12,29 @@ type Comparator func(a, b any) bool
 
 const DefaultCapacity = 64
 
-func New[T comparable](cmp ...Comparator) *Heap[T] {
-	return NewWithCap[T](DefaultCapacity, cmp...)
+func New[T comparable](cmp Comparator) *Heap[T] {
+	return NewWithCap[T](DefaultCapacity, cmp)
 }
 
-func NewWithCap[T comparable](cap int, cmp ...Comparator) *Heap[T] {
+func NewWithCap[T comparable](cap int, cmp Comparator) *Heap[T] {
 	return &Heap[T]{
 		data: make([]T, 0, cap),
 		idx:  make(map[T]int),
 		cnt:  make(map[T]int),
-		cmp:  getComparator(cmp),
+		cmp:  cmp,
 	}
 }
 
-func Build[T comparable, S ~[]T](data S, cmp ...Comparator) *Heap[T] {
+func Build[T comparable, S ~[]T](data S, cmp Comparator) *Heap[T] {
 	res := &Heap[T]{
 		data: data,
 		idx:  make(map[T]int),
 		cnt:  make(map[T]int),
-		cmp:  getComparator(cmp),
+		cmp:  cmp,
 		size: len(data),
 	}
 	res.build()
 	return res
-}
-
-func getComparator(cmp []Comparator) Comparator {
-	if len(cmp) == 0 {
-		return func(a, b any) bool {
-			switch av := a.(type) {
-			case int:
-				return av < b.(int)
-			case int8:
-				return av < b.(int8)
-			case int16:
-				return av < b.(int16)
-			case int32:
-				return av < b.(int32)
-			case int64:
-				return av < b.(int64)
-			case uint:
-				return av < b.(uint)
-			case uint8:
-				return av < b.(uint8)
-			case uint16:
-				return av < b.(uint16)
-			case uint32:
-				return av < b.(uint32)
-			case uint64:
-				return av < b.(uint64)
-			case uintptr:
-				return av < b.(uintptr)
-			case float32:
-				return av < b.(float32)
-			case float64:
-				return av < b.(float64)
-			default:
-				panic("you should pass a comprator for the items")
-			}
-		}
-	}
-	return cmp[0]
 }
 
 // build will build the heap by the given cmp.
